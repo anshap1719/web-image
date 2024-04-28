@@ -1,0 +1,64 @@
+[package]
+name = "web-image"
+version = "0.1.0"
+edition = "2021"
+authors = ["Anshul Sanghi <anshul@anshulsanghi.tech>"]
+description = "A crate for easy interop between web APIs and DynamicImage from `image-rs`"
+homepage = "https://github.com/anshap1719/web-image"
+repository = "https://github.com/anshap1719/web-image"
+keywords = ["image", "wasm", "web-assembly"]
+categories = ["multimedia"]
+license = "Apache-2.0"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+image = { version = "0.25.0", default-features = false, features = [
+    "gif",
+    "jpeg",
+    "ico",
+    "png",
+    "pnm",
+    "tga",
+    "tiff",
+    "webp",
+    "bmp",
+    "hdr",
+    "dds",
+] }
+wasm-bindgen = "0.2.91"
+js-sys = "0.3"
+wasm-bindgen-futures = "0.4.42"
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+    "Document",
+    "Element",
+    "HtmlElement",
+    "Node",
+    "Window",
+    "CanvasRenderingContext2d",
+    "ImageData",
+    "HtmlCanvasElement",
+    "HtmlImageElement",
+    "console",
+    "CssStyleDeclaration",
+    "EventTarget",
+    "Blob",
+    "ImageBitmap",
+    "ImageBitmapOptions",
+    "ColorSpaceConversion"
+]
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-O3", "--enable-mutable-globals"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+opt-level = 3
