@@ -6,12 +6,12 @@ use web_sys::{Blob, ColorSpaceConversion, ImageBitmap, ImageBitmapOptions, Image
 use crate::format::ImageFormatInt;
 use crate::util::blob_into_bytes;
 
+#[derive(Clone)]
 #[wasm_bindgen]
 pub struct WebImage {
     raw_pixels: Vec<u8>,
     width: u32,
     height: u32,
-    format: ImageFormat,
 }
 
 impl From<&DynamicImage> for WebImage {
@@ -23,7 +23,6 @@ impl From<&DynamicImage> for WebImage {
             raw_pixels,
             width,
             height,
-            format: ImageFormat::Jpeg,
         }
     }
 }
@@ -42,7 +41,6 @@ impl WebImage {
             raw_pixels,
             width,
             height,
-            format: ImageFormat::Jpeg,
         }
     }
 
@@ -54,20 +52,6 @@ impl WebImage {
             raw_pixels,
             width: img.width(),
             height: img.height(),
-            format: ImageFormat::Jpeg,
-        }
-    }
-
-    pub fn from_byte_slice_with_format(bytes: &[u8], format: ImageFormatInt) -> Self {
-        let format = ImageFormat::from(format);
-        let img = image::load_from_memory_with_format(bytes, format).unwrap();
-        let raw_pixels = img.to_rgba8().to_vec();
-
-        Self {
-            raw_pixels,
-            format,
-            width: img.width(),
-            height: img.height(),
         }
     }
 
@@ -76,25 +60,13 @@ impl WebImage {
         Self::from_byte_slice(&bytes)
     }
 
-    pub async fn from_blob_with_format(blob: Blob, format: ImageFormatInt) -> Self {
-        let bytes = blob_into_bytes(blob).await;
-        Self::from_byte_slice_with_format(&bytes, format)
-    }
-
-    pub fn into_image_data(self) -> ImageData {
-        let dynamic_image: DynamicImage = self.into();
-        let mut raw_pixels = dynamic_image.to_rgba8().to_vec();
-
+    pub fn into_image_data(mut self) -> ImageData {
         ImageData::new_with_u8_clamped_array_and_sh(
-            Clamped(&mut raw_pixels),
-            dynamic_image.width(),
-            dynamic_image.height(),
+            Clamped(&mut self.raw_pixels),
+            self.width,
+            self.height,
         )
         .unwrap()
-    }
-
-    pub fn get_format(&self) -> ImageFormatInt {
-        self.format.into()
     }
 
     pub async fn into_image_bitmap(self) -> Result<ImageBitmap, JsValue> {
@@ -107,6 +79,10 @@ impl WebImage {
         let bitmap = future.await?;
 
         Ok(bitmap.into())
+    }
+
+    pub fn raw_pixels(self) -> Vec<u8> {
+        self.raw_pixels
     }
 
     pub fn width(&self) -> u32 {
