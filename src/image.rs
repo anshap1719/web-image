@@ -3,7 +3,6 @@ use wasm_bindgen::{Clamped, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Blob, ColorSpaceConversion, ImageBitmap, ImageBitmapOptions, ImageData, window};
-use crate::format::ImageFormatInt;
 use crate::util::blob_into_bytes;
 
 #[derive(Clone)]
