@@ -1,6 +1,6 @@
 [package]
 name = "web-image"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["Anshul Sanghi <anshul@anshulsanghi.tech>"]
 description = "A crate for easy interop between web APIs and DynamicImage from `image-rs`"
