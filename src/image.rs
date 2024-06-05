@@ -1,15 +1,11 @@
-use crate::util::blob_into_bytes;
 use image::{DynamicImage, GenericImageView, ImageBuffer, ImageFormat};
-use serde::{Deserialize, Serialize};
-use std::mem::forget;
-use std::rc::Rc;
-use wasm_bindgen::__rt::IntoJsResult;
+use wasm_bindgen::{Clamped, JsValue};
 use wasm_bindgen::prelude::wasm_bindgen;
-use wasm_bindgen::{Clamped, JsCast, JsValue};
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{window, Blob, ColorSpaceConversion, ImageBitmap, ImageBitmapOptions, ImageData};
+use web_sys::{Blob, ColorSpaceConversion, ImageBitmap, ImageBitmapOptions, ImageData, window};
+use crate::util::blob_into_bytes;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone)]
 #[wasm_bindgen]
 pub struct WebImage {
     raw_pixels: Vec<u8>,
@@ -78,10 +74,7 @@ impl WebImage {
         let mut options = ImageBitmapOptions::new();
         options.color_space_conversion(ColorSpaceConversion::Default);
 
-        let future: JsFuture = window()
-            .unwrap()
-            .create_image_bitmap_with_image_data_and_image_bitmap_options(&image_data, &options)?
-            .into();
+        let future: JsFuture = window().unwrap().create_image_bitmap_with_image_data_and_image_bitmap_options(&image_data, &options)?.into();
         let bitmap = future.await?;
 
         Ok(bitmap.into())
