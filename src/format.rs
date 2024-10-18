@@ -1,8 +1,11 @@
+//! Image format magic numbers
+
 use image::ImageFormat;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
 #[derive(Copy, Clone, Eq, PartialEq)]
+/// Provides integer values corresponding to all supported image formats.
 pub enum ImageFormatInt {
     Png = 1,
     Jpeg = 2,
@@ -61,7 +64,7 @@ impl From<ImageFormat> for ImageFormatInt {
             ImageFormat::Farbfeld => ImageFormatInt::Farbfeld,
             ImageFormat::Avif => ImageFormatInt::Avif,
             ImageFormat::Qoi => ImageFormatInt::Qoi,
-            _ => unimplemented!("Unknown image format")
+            _ => unimplemented!("Unknown image format"),
         }
     }
 }
