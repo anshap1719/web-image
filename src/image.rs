@@ -7,6 +7,8 @@ use wasm_bindgen_futures::JsFuture;
 use web_sys::{window, Blob, ColorSpaceConversion, ImageBitmap, ImageBitmapOptions, ImageData};
 
 #[derive(Clone)]
+#[cfg_attr(feature = "serde", allow(clippy::unsafe_derive_deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[wasm_bindgen]
 pub struct WebImage {
     raw_pixels: Vec<u8>,
@@ -111,8 +113,8 @@ impl WebImage {
     pub async fn into_image_bitmap(self) -> Result<ImageBitmap, JsValue> {
         let image_data = self.try_into_image_data()?;
 
-        let mut options = ImageBitmapOptions::new();
-        options.color_space_conversion(ColorSpaceConversion::Default);
+        let options = ImageBitmapOptions::new();
+        options.set_color_space_conversion(ColorSpaceConversion::Default);
 
         let future: JsFuture = window()
             .ok_or(WebImageError::DomError)
